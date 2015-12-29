@@ -78,9 +78,9 @@ void CFG::split(const string& str){
 			if( comp(NT[j], str, i) )
 			{
 				//	cout << "dsfgwer" << endl;
-					mp[NT[mark]][size].push_back(NT[j] + "`");
-					ok = true;
-					i += NT[j].size() - 1;
+				mp[NT[mark]][size].push_back(NT[j] + "`");
+				ok = true;
+				i += NT[j].size() - 1;
 			}	
 		}
 	//	cout << "sdfwer" << endl;
