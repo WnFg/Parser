@@ -38,9 +38,9 @@ struct CFG
 			P.push_back(str);
 		}
 	}
-    void split(const string& str);   
+    	void split(const string& str);   
 
-	void analysis_P();      // 把一个表达式分解为： 一a个非终结符  -> 终结符或非终结符的串
+    	void analysis_P();      // 把一个表达式分解为： 一a个非终结符  -> 终结符或非终结符的串
 };
 
 
