@@ -40,23 +40,25 @@ struct CFG
 	}
     void split(const string& str);   
 
-	void analysis_P(){      // 把一个表达式分解为： 一a个非终结符  -> 终结符或非终结符的串
-		my_List<string> *lst = new my_List<string>;
-		lst->head = new Node<string>;
-		for(int i = 0; i < (int)P.size(); i++){
-			split(P[i]);		
-		}
-		
-		for(int i = 0; i < (int)NT.size(); i++){
-			for(int j = 0; j < mp[NT[i]].size(); j++){
-				for(int k = 0; k < mp[NT[i]][j].size(); j++)
-					lst->add(new Node<string>(mp[NT[i]][j][k]), 1);
-				exp[NT[i]].push_back(*lst);
-			}
-		}
-	}
+	void analysis_P();      // 把一个表达式分解为： 一a个非终结符  -> 终结符或非终结符的串
 };
 
+
+void CFG::analysis_P(){      // 把一个表达式分解为： 一a个非终结符  -> 终结符或非终结符的串
+	my_List<string> *lst = new my_List<string>;
+	lst->head = new Node<string>;
+	for(int i = 0; i < (int)P.size(); i++){
+		split(P[i]);		
+		}
+		
+	for(int i = 0; i < (int)NT.size(); i++){
+		for(int j = 0; j < mp[NT[i]].size(); j++){
+			for(int k = 0; k < mp[NT[i]][j].size(); j++)
+				lst->add(new Node<string>(mp[NT[i]][j][k]), 1);
+			exp[NT[i]].push_back(*lst);
+		}
+	}
+}
 
 void CFG::split(const string& str){
 	int mark;

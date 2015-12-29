@@ -6,8 +6,15 @@ template<class T>
 	{
 		T v;
 		Node *last, *next;
-		
+		Node(){
+			last = next = NULL;
+		}
+		Node(T val){
+			v = val;
+			last = next = NULL;
+		}
 	};
+
 template<class T>
 	struct my_List
 	{
