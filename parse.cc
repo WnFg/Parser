@@ -8,7 +8,6 @@ using namespace std;
 #include "need.h"
 #include "mylist.h"
 
-
 struct CFG
 {	
 	string S;    //起始符
