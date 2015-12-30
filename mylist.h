@@ -20,36 +20,60 @@ template<class T>
 	{
 		Node<T> *head, *end;
 		int size;
+		void f(Node<T> *a, Node<T> *b){
+			a->next = b;
+			b->last = a;
+		}
+		
+		my_List()
+		{
+			end = head = new Node<T>;	
+			size = 0;
+		}
+		
+		my_List(my_List<T> *a)
+		{
+			head = new Node<T>;
+			Node<T> *p = head, *p1 = a->head;
+			while(p1->next != NULL){
+				p->next = new Node<T>(p1->next->v);
+				f(p, p->next);
+				p = p->next;
+				p1 = p1->next;
+			}
+			end = p;
+			size = a->size;
+		}
 		void del(Node<T> *p){
 			if(end == p)
 				end = p->last;
-			p->last->next = p->next;
+			f(p->last->next, p->next);
 			delete(p);
+			size--;
 		}
 
 		void add(Node<T> *p, int t){
 			if(size == 0){
+		//		end->net = p;
+				f(end, p);
 				end = p;
 			}
 			if(!t){
-				p->next = head->next;
-				head->next = p->next;
-				size++;
+				f(p, head->next);
+				f(head ,p);
 			}else{
-				end->next = p;
+				f(end, p);
 				end = p;
 			}
 			size++;
 		}
 
 		void add(my_List<T> *ls, int t){
-			if(size == 0)
-				end = ls->end;
 			if(!t){
-				ls->end = head->next;
-				head->next = ls->head->next;
+				f(ls->end, head->next);
+				f(head, ls->head->next);
 			}else{
-				end->next = ls->head->next;
+				f(end, ls->head->next);
 				end = ls->end;
 			}
 			size += ls->size;
