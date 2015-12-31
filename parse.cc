@@ -145,7 +145,7 @@ void CFG::analysis_P(){      // 把一个表达式分解为： 一a个非终结�
 			
 			exp[NT[i]].push_back(*lst);
 		}
-		cout << (exp[NT[0]][0].head->next == NULL) << " bvbb" << endl;
+	//	cout << (exp[NT[0]][0].head->next == NULL) << "~~~~~~~~~" << (exp[NT[0]][0].head->next->next->next == NULL)<< " bvbb" << endl;
 	}
 	cout << "qweqwe" << endl;	
 }
@@ -193,19 +193,16 @@ int main()
 	cfg->analysis_P();
 	cout << "sdfsdf" << endl;
 	cfg->replace();
-	cout << "sdfwqer" << endl;
+//	cout <<cfg->NT.size() <<  " sdfwqer" << endl;
 	for(int i = 0; i < cfg->NT.size(); i++){
 		VList &ret = cfg->exp[cfg->NT[i]];
 		for(int j = 0; j < ret.size(); j++){
 			Node<string> *p = ret[j].head;
-		/*	while(p->next != NULL){
+			while(p->next != NULL){
 				cout << p->next->v << " ";
 				p = p->next;
 			}
 			cout << endl;
-		*/
-		cout <<	(p->next->next->v) << endl;
-		cout << "vcxv" << endl;
 		}
 	}
 	return 0;

@@ -46,18 +46,16 @@ template<class T>
 		}
 		void del(Node<T> *p){
 			if(end == p)
+			{
 				end = p->last;
-			f(p->last->next, p->next);
+				end->next = NULL;
+			}
+			f(p->last, p->next);
 			delete(p);
 			size--;
 		}
 
 		void add(Node<T> *p, int t){
-			if(size == 0){
-		//		end->net = p;
-				f(end, p);
-				end = p;
-			}
 			if(!t){
 				f(p, head->next);
 				f(head ,p);
