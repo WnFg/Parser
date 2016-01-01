@@ -4,9 +4,12 @@
 #include <cstring>
 #include <string>
 #include <map>
+#include <queue>
+#include <algorithm>
 using namespace std;
 #include "need.h"
 #include "mylist.h"
+#include "hashSet.h"
 #define VList vector<my_List<string> > 
 
 struct CFG
@@ -16,8 +19,11 @@ struct CFG
 	vector<string> P, spt;	 // 表达式
 	map< string, vector<my_List<string> > > exp;
 	map< string, vector<vector<string> > > mp;
+	hashSet *hSet;
 
 	CFG(){
+		hSet = new hashSet(1001);
+		
 		cout << "输入非结束符,以0结束：" << endl;
 		string str;
 		while(cin >> str && str != "0"){
@@ -38,34 +44,121 @@ struct CFG
 		while(cin >> str && str != "0"){
 			P.push_back(str);
 		}
+		
 	}
 
-    	void split(const string& str);   
+    void split(const string& str);   
 
 	void analysis_P();      // 把一个表达式分解为： 一a个非终结符  -> 终结符或非终结符的串
-	
-	void emilite(string& nt);
-	
-	void replace();
-	
-	VList __replace(string& nt, my_List<string>& ls){
-		VList ans;
-		VList &ret = exp[nt];
-		for(int i = 0; i < ret.size(); i++){
-			my_List<string> *a = new my_List<string>(&ls);
 		
-			a->del(a->head->next);
-		
-			a->add(&ret[i], 0);
-		
-			ans.push_back(*a);
-		}	
-		VList &a = exp[nt];
-		delete_list(&ls);
-		return ans;
-	// ~~~~~~~~~~~~~~~~~~~~~~~~
-	}
+	void emilite(string& nt);   // 消除直接左递归
+	
+	void replace();		//  消除左递归
+	
+	void markEmpty();   // 记录那些具有空串的非终结符
+
+	void extractLeftFactor();   // 提取左因子 
+	
+	VList __replace(string& nt, my_List<string>& ls);
 };
+
+void CFG::extractLeftFactor()
+{
+	queue<string> Que;
+	for(int i = 0; i < NT.size(); i++)
+		Que.push(NT[i]);
+
+	while(!Que.empty()){
+		string &nt = Que.front();
+		Que.pop();
+		VList &ep = exp[nt];
+		if(ep.size() == 1) continue;
+		sort(ep.begin(), ep.end());
+		
+		my_List<string> sb;
+		sb.add(new Node<string>("^!@(&"), 1);
+		ep.push_back(sb);
+
+		string newnt = nt + "!";
+		int cnt = 0;
+		bool isEmpty = false;
+		VList vls1, vls2;
+		
+		for(int i = 1; i < ep.size(); i++){
+			
+			if(ep[i - 1].size == 0) {vls2.push_back(*(new my_List<string>)); continue;}
+
+			Node<string> *p1 = ep[i - 1].head;
+			Node<string> *p2 = ep[i].head;
+
+			my_List<string> *ret = new my_List<string>(&ep[i - 1]);
+			ret->del(ret->head->next);
+			if(ret->size > 0)
+				vls1.push_back(*ret);
+			else
+				isEmpty = true;
+			
+			if(p1->next->v == p2->next->v){
+				cnt++;
+			}else{
+				if(cnt > 0){
+					Que.push(newnt);
+					newNT.push_back(newnt);
+					if(isEmpty)
+					{
+						vls1.push_back(*(new my_List<string>));
+						hSet->insert(newnt);
+					}
+					exp[newnt] = vls1;
+					my_List<string> *tt = new my_List<string>;		
+					tt->add(new Node<string>(p1->next->v), 1);
+					tt->add(new Node<string>(newnt), 1);
+					vls2.push_back(*tt);
+					
+					newnt += "!";
+					cnt = 0;
+				}else{
+					vls2.push_back(new my_List<string>(&ep[i - 1]));
+				}
+				isEmpty = false;
+				vls1.clear();
+			}
+		}
+		exp[nt].clear();
+		exp[nt] = vls2;
+	}
+	NT.insert(NT.end(), newNT.begin(), newNT.end());
+	newNT.clear();
+}
+
+void CFG::markEmpty()
+{
+	for(int i = 0; i < NT.size(); i++){
+		VList &ep = exp[NT[i]];
+		for(int j = 0; j < ep.size(); j++)
+			if(ep[j].size == 0){
+				hSet->insert(NT[i]);
+				break;
+			}
+	}
+}
+
+VList CFG::__replace(string& nt, my_List<string>& ls){
+	VList ans;
+	VList &ret = exp[nt];
+	for(int i = 0; i < ret.size(); i++){
+		my_List<string> *a = new my_List<string>(&ls);
+	
+		a->del(a->head->next);
+	
+		a->add(&ret[i], 0);
+		
+		ans.push_back(*a);
+	}	
+	VList &a = exp[nt];
+	delete_list(&ls);
+	return ans;
+}
 
 void CFG::emilite(string& nt){
 	vector<my_List<string> > &vc = exp[nt];
@@ -95,11 +188,9 @@ void CFG::emilite(string& nt){
 		}else{
 		    vc[i].del(vc[i].head->next);
 			my_List<string> *p = new my_List<string>(&vc[i]);
-		//	delete_list(&vc[i]);
 			p->add(new Node<string>(A1), 1);
 			exp[A1].push_back(*p);
 		}
-		// ~~~~~~~~~~~~~~~~~~~~~
 		delete_list(&vc[i]);
 	}
 	exp[A1].push_back(new my_List<string>);
@@ -129,6 +220,7 @@ void CFG::replace()
 		}	
 	}
 	NT.insert(NT.end(), newNT.begin(), newNT.end());
+	newNT.clear();
 }
 
 void CFG::analysis_P(){      // 把一个表达式分解为： 一a个非终结符  -> 终结符或非终结符的串
@@ -145,6 +237,7 @@ void CFG::analysis_P(){      // 把一个表达式分解为： 一a个非终结�
 			exp[NT[i]].push_back(*lst);
 		}
 	}
+	mp.clear();
 }
 
 void CFG::split(const string& str){
@@ -183,10 +276,10 @@ void CFG::split(const string& str){
 CFG *cfg = new CFG;
 int main()
 {
-//	init();
+//	test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	cfg->analysis_P();
 	cfg->replace();
-	
+	cfg->extractLeftFactor();
 	cout << " ~~~~~~~~~~~~~~~~~~~~ " << endl;
 	for(int i = 0; i < cfg->NT.size(); i++){
 		VList &ret = cfg->exp[cfg->NT[i]];
@@ -197,7 +290,7 @@ int main()
 				cout << p->next->v << " ";
 				p = p->next;
 			}
-			cout << endl;
+			cout << (bool)cfg->hSet->hasEmpty(cfg->NT[i]) << endl;
 		}
 	}
 	return 0;

@@ -37,8 +37,7 @@ template<class T>
 			return p;
 		}
 
-		my_List(){
-		
+		my_List(){	
 			end = head = new Node<T>;	
 			size = 0;
 		}
@@ -96,6 +95,23 @@ template<class T>
 				end = copy(end, ls);
 			}
 			size += ls->size;
+		}
+
+		bool operator < (my_List<T> a) const
+		{
+			int minSize = a.size < size ? a.size : size;
+			Node<T> *p1 = head, *p2 = a.head;
+			for(int i = 0; i < minSize; i++){
+				if(p1->next->v < p2->next->v)
+					return true;
+				else if(p1->next->v > p2->next->v)
+					return false;
+				p1 = p1->next;
+				p2 = p2->next;
+			}
+			if(a.size > minSize) return true;
+			if(size > minSize) return false;
+			return true;
 		}
 	};
 	void delete_list(my_List<string> *p){
