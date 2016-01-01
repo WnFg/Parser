@@ -20,10 +20,12 @@ template<class T>
 	{
 		Node<T> *head, *end;
 		int size;
-		void f(Node<T> *a, Node<T> *b){
+		
+		inline void f(Node<T> *a, Node<T> *b){
 			a->next = b;
 			b->last = a;
 		}
+
 		Node<T>* copy(Node<T> *p, my_List<T> *a){
 			Node<T> *p1 = a->head;
 			while(p1->next != NULL){
@@ -34,18 +36,20 @@ template<class T>
 			}
 			return p;
 		}
-		my_List()
-		{
+
+		my_List(){
+		
 			end = head = new Node<T>;	
 			size = 0;
 		}
 		
-		my_List(my_List<T> *a)
-		{
+		my_List(my_List<T> *a){
+		
 			head = new Node<T>;
 			end = copy(head, a);
 			size = a->size;
 		}
+
 		void del(Node<T> *p){
 			if(end == p)
 			{
@@ -94,14 +98,13 @@ template<class T>
 			size += ls->size;
 		}
 	};
-void delete_list(my_List<string> *p){
-	Node<string> *a = p->head, *b = p->head->next;
-	delete(a);
-	while(b != NULL){
-		a = b;
-		b = a->next;
-		delete(a);
+	void delete_list(my_List<string> *p){
+		if(p == NULL) return ;
+		Node<string> *a, *b = p->head->next;
+		while(b != NULL){
+			a = b;
+			b = a->next;
+			delete(a);
+		}
 	}
-	delete(p->end);
-}
 #endif

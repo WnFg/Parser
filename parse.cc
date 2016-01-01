@@ -61,7 +61,9 @@ struct CFG
 			ans.push_back(*a);
 		}	
 		VList &a = exp[nt];
+		delete_list(&ls);
 		return ans;
+	// ~~~~~~~~~~~~~~~~~~~~~~~~
 	}
 };
 
@@ -97,6 +99,8 @@ void CFG::emilite(string& nt){
 			p->add(new Node<string>(A1), 1);
 			exp[A1].push_back(*p);
 		}
+		// ~~~~~~~~~~~~~~~~~~~~~
+		delete_list(&vc[i]);
 	}
 	exp[A1].push_back(new my_List<string>);
 	exp[nt] = vls;
