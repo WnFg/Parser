@@ -22,7 +22,7 @@ struct CFG
 	hashSet *hSet;
 
 	CFG(){
-		hSet = new hashSet(1001);
+		hSet = new hashSet(1013);
 		
 		cout << "输入非结束符,以0结束：" << endl;
 		string str;
