@@ -59,7 +59,6 @@ struct CFG
 			a->add(&ret[i], 0);
 		
 			ans.push_back(*a);
-		
 		}	
 		VList &a = exp[nt];
 		return ans;
