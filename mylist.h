@@ -72,19 +72,6 @@ template<class T>
 			size++;
 		}
 
-/*		void add(my_List<T> *ls, int t){
-			if(size == 0){
-				head->next = ls->head->next;
-				end = ls->end;
-			}else if(!t){
-				f(ls->end, head->next);
-				f(head, ls->head->next);
-			}else{
-				f(end, ls->head->next);
-				end = ls->end;
-			}
-			size += ls->size;
-		}*/
 		void add(my_List<T> *ls, int t){
 			if(size == 0){
 				end = copy(head, ls);
