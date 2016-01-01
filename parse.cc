@@ -40,11 +40,14 @@ struct CFG
 		}
 	}
 
-    void split(const string& str);   
+    	void split(const string& str);   
 
 	void analysis_P();      // 把一个表达式分解为： 一a个非终结符  -> 终结符或非终结符的串
+	
 	void emilite(string& nt);
+	
 	void replace();
+	
 	VList __replace(string& nt, my_List<string>& ls){
 		VList ans;
 		VList &ret = exp[nt];
@@ -59,10 +62,8 @@ struct CFG
 		
 		}	
 		VList &a = exp[nt];
-
 		return ans;
 	}
-
 };
 
 void CFG::emilite(string& nt){
@@ -90,7 +91,6 @@ void CFG::emilite(string& nt){
 			ls.add(new Node<string>(A1), 1);
 			
 			vls.push_back(ls);
-	           
 		}else{
 		    vc[i].del(vc[i].head->next);
 			my_List<string> *p = new my_List<string>(&vc[i]);
@@ -101,7 +101,6 @@ void CFG::emilite(string& nt){
 	}
 	exp[A1].push_back(new my_List<string>);
 	exp[nt] = vls;
-
 }
 
 void CFG::replace()
