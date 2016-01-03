@@ -155,7 +155,7 @@ VList CFG::__replace(string& nt, my_List<string>& ls){
 		
 		ans.push_back(*a);
 	}	
-	VList &a = exp[nt];
+//	VList &a = exp[nt];
 	delete_list(&ls);
 	return ans;
 }
