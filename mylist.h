@@ -84,7 +84,7 @@ template<class T>
 			size += ls->size;
 		}
 
-		bool operator < (my_List<T> a) const
+		bool operator < (my_List<T> &a) const
 		{
 			int minSize = a.size < size ? a.size : size;
 			Node<T> *p1 = head, *p2 = a.head;
