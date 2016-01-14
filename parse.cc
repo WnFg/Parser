@@ -47,7 +47,7 @@ struct CFG
 		
 	}
 
-    	void split(const string& str);   
+    void split(const string& str);   
 
 	void analysis_P();      // 把一个表达式分解为： 一a个非终结符  -> 终结符或非终结符的串
 		
@@ -60,7 +60,21 @@ struct CFG
 	void extractLeftFactor();   // 提取左因子 
 	
 	VList __replace(string& nt, my_List<string>& ls);
+	
+	void getFirstSet();
+
+	void getFollowSet();
 };
+
+void CFG::getFirstSet()
+{
+	//abool change = true;
+	
+	while(true){
+		
+	}
+
+}
 
 void CFG::extractLeftFactor()
 {
