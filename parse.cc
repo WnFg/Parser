@@ -4,6 +4,7 @@
 #include <cstring>
 #include <string>
 #include <map>
+#include <set>
 #include <queue>
 #include <algorithm>
 using namespace std;
@@ -11,7 +12,8 @@ using namespace std;
 #include "mylist.h"
 #include "hashSet.h"
 #define VList vector<my_List<string> > 
-
+#define Expression my_List<string>
+#define None "I'm none symbol!"
 struct CFG
 {	
 	string S;    //起始符
@@ -20,10 +22,13 @@ struct CFG
 	map< string, vector<my_List<string> > > exp;
 	map< string, vector<vector<string> > > mp;
 	hashSet *hSet;
+	hashMap<set<string> > *first;
+	hashMap<set<string> > *follow;
 
 	CFG(){
 		hSet = new hashSet(1013);
-		
+		first = new hashMap< set<string> >(1013);
+		follow = new hashMap< set<string> >(1013);
 		cout << "输入非结束符,以0结束：" << endl;
 		string str;
 		while(cin >> str && str != "0"){
@@ -68,12 +73,62 @@ struct CFG
 
 void CFG::getFirstSet()
 {
-	//abool change = true;
-	
-	while(true){
-		
-	}
+	bool change = true;
+	hashMap<set<string> > &First = *first; 
 
+	for(int i = 0; i < T.size(); i++){
+		set<string> *ret = new set<string>;
+		ret->insert(T[i]);
+		first->insert(T[i], ret);
+	}
+	
+	while(change){
+		change = false;
+		for(int i = 0; i < NT.size(); i++){
+			VList& ep = exp[NT[i]];
+			set<string> *nowFirst = First[NT[i]];
+			bool nowHasEmpty = nowFirst->count(None) > 0;
+
+			for(int j = 0; j < ep.size(); j++){
+				Expression& expression = ep[j];
+				
+				if(expression.size == 0){
+					if(!nowHasEmpty){
+						change = true;
+						nowHasEmpty = true;
+						nowFirst->insert(None);
+					}
+					continue;
+				}
+				
+				Node<string> *p = expression.head;
+				bool expHasEmpty = true;
+				while(p->next != NULL){
+					string& nt = p->next->v;
+					set<string> *tt = First[nt];
+					int count_last = nowFirst->size();
+					for(set<string>::iterator it = tt->begin(); it != tt->end(); it++){
+						if(*it == None) continue; 
+						nowFirst->insert(*it);
+					}
+					int count_now = nowFirst->size();
+					if(count_now != count_last){
+						change = true;
+					}
+					if(tt->count(None) == 0){
+						expHasEmpty = false;
+						break;
+					}
+				}
+				
+				if(!nowHasEmpty && expHasEmpty){
+					change = true;
+					nowFirst->insert(None);
+					nowHasEmpty = true;
+				}
+			}
+		}			
+	}
 }
 
 void CFG::extractLeftFactor()
