@@ -11,14 +11,16 @@ using namespace std;
 #include "need.h"
 #include "mylist.h"
 #include "hashSet.h"
+
 #define VList vector<my_List<string> > 
 #define Expression my_List<string>
 #define None "I'm none symbol!"
+
 struct CFG
 {	
-	string S;    //èµ·å§‹ç¬¦
-	vector<string> newNT, NT, T;    // éç»ˆç»“ç¬¦ï¼Œ ç»ˆç»“ç¬¦
-	vector<string> P, spt;	 // è¡¨è¾¾å¼
+	string S;    //ÆğÊ¼·û
+	vector<string> newNT, NT, T;    // ·ÇÖÕ½á·û£¬ ÖÕ½á·û
+	vector<string> P, spt;	 // ±í´ïÊ½
 	map< string, vector<my_List<string> > > exp;
 	map< string, vector<vector<string> > > mp;
 	hashSet *hSet;
@@ -29,40 +31,40 @@ struct CFG
 		hSet = new hashSet(1013);
 		first = new hashMap< set<string> >(1013);
 		follow = new hashMap< set<string> >(1013);
-		cout << "è¾“å…¥éç»“æŸç¬¦,ä»¥0ç»“æŸï¼š" << endl;
+		cout << "ÊäÈë·Ç½áÊø·û,ÒÔ0½áÊø£º" << endl;
 		string str;
 		while(cin >> str && str != "0"){
 			NT.push_back(str);	
 		}
 
-		cout << "è¾“å…¥ç»“æŸç¬¦ï¼Œä»¥0ç»“æŸï¼š" << endl;
+		cout << "ÊäÈë½áÊø·û£¬ÒÔ0½áÊø£º" << endl;
 		while(cin>> str && str != "0"){
 			T.push_back(str);
 		}
 
-		cout << "è¾“å…¥å¼€å§‹ç¬¦ï¼Œä»¥0ç»“æŸï¼š" << endl;
+		cout << "ÊäÈë¿ªÊ¼·û£¬ÒÔ0½áÊø£º" << endl;
 		while(cin >> str && str != "0"){
 			S = str;
 		}
 
-		cout << "è¾“å…¥è¡¨è¾¾å¼ï¼Œæ¯è¡Œä¸ºä¸€æ¡è¡¨è¾¾å¼ï¼Œä»¥0ç»“æŸï¼š" << endl;
+		cout << "ÊäÈë±í´ïÊ½£¬Ã¿ĞĞÎªÒ»Ìõ±í´ïÊ½£¬ÒÔ0½áÊø£º" << endl;
 		while(cin >> str && str != "0"){
 			P.push_back(str);
 		}
 		
 	}
 
-    	void split(const string& str);   
+    void split(const string& str);   
 
-	void analysis_P();      // æŠŠä¸€ä¸ªè¡¨è¾¾å¼åˆ†è§£ä¸ºï¼š ä¸€aä¸ªéç»ˆç»“ç¬¦  -> ç»ˆç»“ç¬¦æˆ–éç»ˆç»“ç¬¦çš„ä¸²
+	void analysis_P();      // °ÑÒ»¸ö±í´ïÊ½·Ö½âÎª£º Ò»a¸ö·ÇÖÕ½á·û  -> ÖÕ½á·û»ò·ÇÖÕ½á·ûµÄ´®
 		
-	void emilite(string& nt);   // æ¶ˆé™¤ç›´æ¥å·¦é€’å½’
+	void emilite(string& nt);   // Ïû³ıÖ±½Ó×óµİ¹é
 	
-	void replace();		//  æ¶ˆé™¤å·¦é€’å½’
+	void replace();		//  Ïû³ı×óµİ¹é
 	
-	void markEmpty();   // è®°å½•é‚£äº›å…·æœ‰ç©ºä¸²çš„éç»ˆç»“ç¬¦
+	void markEmpty();   // ¼ÇÂ¼ÄÇĞ©¾ßÓĞ¿Õ´®µÄ·ÇÖÕ½á·û
 
-	void extractLeftFactor();   // æå–å·¦å› å­ 
+	void extractLeftFactor();   // ÌáÈ¡×óÒò×Ó 
 	
 	VList __replace(string& nt, my_List<string>& ls);
 	
@@ -83,12 +85,18 @@ void CFG::getFirstSet()
 	}
 	
 	while(change){
+		cout << "cvbcbv" << endl;
 		change = false;
 		for(int i = 0; i < NT.size(); i++){
 			VList& ep = exp[NT[i]];
+			cout << "dsfsdfg0" << endl; 
 			set<string> *nowFirst = First[NT[i]];
+			if(nowFirst == NULL){
+				nowFirst = new set<string>;
+			}
+			cout << "cvcvb 0.1" << endl;
 			bool nowHasEmpty = nowFirst->count(None) > 0;
-
+			cout << "sdfsdf1" << endl;
 			for(int j = 0; j < ep.size(); j++){
 				Expression& expression = ep[j];
 				
@@ -100,12 +108,16 @@ void CFG::getFirstSet()
 					}
 					continue;
 				}
-				
+				cout << "sdfsdf 2" << endl;
 				Node<string> *p = expression.head;
 				bool expHasEmpty = true;
 				while(p->next != NULL){
 					string& nt = p->next->v;
 					set<string> *tt = First[nt];
+					if( tt == NULL ){
+						expHasEmpty = false;
+						break;
+					}
 					int count_last = nowFirst->size();
 					for(set<string>::iterator it = tt->begin(); it != tt->end(); it++){
 						if(*it == None) continue; 
@@ -120,7 +132,7 @@ void CFG::getFirstSet()
 						break;
 					}
 				}
-				
+				cout << "dfg dfg 3" << endl;
 				if(!nowHasEmpty && expHasEmpty){
 					change = true;
 					nowFirst->insert(None);
@@ -292,7 +304,7 @@ void CFG::replace()
 	newNT.clear();
 }
 
-void CFG::analysis_P(){      // æŠŠä¸€ä¸ªè¡¨è¾¾å¼åˆ†è§£ä¸ºï¼š ä¸€aä¸ªéç»ˆç»“ç¬¦  -> ç»ˆç»“ç¬¦æˆ–éç»ˆç»“ç¬¦çš„ä¸²
+void CFG::analysis_P(){      // °ÑÒ»¸ö±í´ïÊ½·Ö½âÎª£º Ò»a¸ö·ÇÖÕ½á·û  -> ÖÕ½á·û»ò·ÇÖÕ½á·ûµÄ´®
 	for(int i = 0; i < (int)P.size(); i++){
 		split(P[i]);		
 		}
@@ -361,6 +373,16 @@ int main()
 			}
 			cout << (bool)cfg->hSet->hasEmpty(cfg->NT[i]) << endl;
 		}
+	}
+	cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << endl;
+	cfg->getFirstSet();
+	for(int i = 0; i < cfg->NT.size(); i++){
+		set<string> &First = *(*(cfg->first))[cfg->NT[i]];
+		cout << (cfg->NT[i]) << endl;
+		for(set<string>::iterator it = First.begin(); it != First.end(); it++){
+			cout << (*it) << endl;
+		} 
+		cout << " ~~~~~~~~ " << endl;
 	}
 	return 0;
 }
